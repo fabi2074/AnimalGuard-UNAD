@@ -9,8 +9,11 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
-  StatusBar
+  StatusBar,
+  Linking,
+  Alert
 } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DenunciasComponent from './src/components/DenunciasComponent';
 import AdopcionEducacionComponent from './src/components/AdopcionEducacionComponent';
 
@@ -20,6 +23,18 @@ export default function App() {
   const [rolUsuario, setRolUsuario] = useState('ciudadano'); // 'ciudadano' | 'albergue'
   const [aceptaHabeasData, setAceptaHabeasData] = useState(false);
   const [moduloActivo, setModuloActivo] = useState('denuncias'); // 'denuncias' | 'adopcion'
+
+  // Abre el texto oficial de la Ley 1581 de 2012 (Función Pública).
+  const abrirLey1581 = async () => {
+    try {
+      await Linking.openURL('https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981');
+    } catch (e) {
+      Alert.alert(
+        'No se pudo abrir el enlace',
+        'Consulta la Ley 1581 de 2012 en www.funcionpublica.gov.co (Gestor Normativo).'
+      );
+    }
+  };
 
   // PANTALLA DE LOGIN, ROLES Y CONSENTIMIENTO HABEAS DATA (LEY 1581 DE 2012)
   if (!autenticado) {
@@ -74,6 +89,17 @@ export default function App() {
                 preliminar, sin sustituir los canales oficiales (Fiscalía GELMA,
                 IDPYBA o Inspecciones de Policía).
               </Text>
+              <TouchableOpacity
+                onPress={abrirLey1581}
+                accessibilityRole="link"
+                accessibilityLabel="Leer la Ley 1581 de 2012"
+                accessibilityHint="Abre el texto oficial de la ley en el navegador"
+                style={{ alignSelf: 'flex-start', minHeight: 48, justifyContent: 'center' }}
+              >
+                <Text style={{ color: '#1B4332', fontSize: 12, fontWeight: 'bold', textDecorationLine: 'underline' }}>
+                  Leer la Ley 1581 de 2012
+                </Text>
+              </TouchableOpacity>
             </View>
 
             <TouchableOpacity
@@ -117,11 +143,27 @@ export default function App() {
           </Text>
         </View>
         <TouchableOpacity
-          onPress={() => setAutenticado(false)}
-          style={styles.btnSalir}
+          onPress={() => {
+            setAceptaHabeasData(false);
+            setAutenticado(false);
+          }}
+          accessibilityRole="button"
+          accessibilityLabel="Cerrar sesión"
+          accessibilityHint="Vuelve al inicio de sesión, donde también puedes cambiar de rol"
+          hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 6,
+            minHeight: 40,
+            paddingHorizontal: 16,
+            borderRadius: 999,
+            backgroundColor: '#FFFFFF'
+          }}
         >
-          <Text style={{ color: '#FFF', fontSize: 11, fontWeight: 'bold' }}>
-            Cambiar Rol
+          <MaterialCommunityIcons name="logout" size={18} color="#1B4332" />
+          <Text style={{ color: '#1B4332', fontSize: 13, fontWeight: 'bold' }}>
+            Cerrar sesión
           </Text>
         </TouchableOpacity>
       </View>
@@ -233,7 +275,6 @@ const styles = StyleSheet.create({
   },
   headerTitulo: { color: '#FFF', fontSize: 18, fontWeight: 'bold' },
   headerSub: { color: '#D8F3DC', fontSize: 11 },
-  btnSalir: { backgroundColor: '#2D6A4F', padding: 8, borderRadius: 6 },
   navBar: { flexDirection: 'row', backgroundColor: '#2D6A4F' },
   navItem: { flex: 1, paddingVertical: 12, alignItems: 'center' },
   navItemActivo: {
