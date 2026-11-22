@@ -14,6 +14,7 @@ INSERT INTO roles (nombre) VALUES ('ciudadano'), ('albergue'), ('admin');
 CREATE TABLE usuarios (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     nombre_completo VARCHAR(120) NOT NULL,
+    correo_electronico VARCHAR(120),
     telefono VARCHAR(20),
     municipio VARCHAR(30) CHECK (municipio IN ('Bogotá D.C.', 'Soacha')),
     rol_id INTEGER REFERENCES roles(id) DEFAULT 1,
@@ -94,8 +95,10 @@ CREATE TABLE solicitudes_adopcion (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     animal_id UUID REFERENCES animales_adopcion(id) ON DELETE CASCADE,
     postulante_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+    correo_postulante VARCHAR(120) NOT NULL,
     tipo_vivienda VARCHAR(40) NOT NULL,
     vivienda_propia_o_autorizada BOOLEAN NOT NULL,
+    experiencia_previa_mascotas TEXT NOT NULL,
     compromiso_cinco_libertades BOOLEAN NOT NULL DEFAULT TRUE,
     declaracion_sin_inhabilidad_ley2455 BOOLEAN NOT NULL DEFAULT TRUE,
     motivo_adopcion TEXT NOT NULL,
@@ -115,10 +118,11 @@ CREATE TABLE seguimiento_posadopcion (
     hito_control VARCHAR(30) NOT NULL CHECK (hito_control IN ('Día 15', 'Día 30', 'Día 90')),
     estado_animal TEXT NOT NULL,
     foto_seguimiento_path TEXT,
-    estado_cumplimiento VARCHAR(30) DEFAULT 'Al día' CHECK (estado_cumplimiento IN (
+    estado_cumplimiento VARCHAR(40) DEFAULT 'Al día' CHECK (estado_cumplimiento IN (
         'Al día',
         'Pendiente',
-        'Alerta de Incumplimiento'
+        'Seguimiento vencido',
+        'Incumplimiento de seguimiento'
     )),
     observacion_albergue TEXT,
     fecha_registro TIMESTAMPTZ DEFAULT NOW()

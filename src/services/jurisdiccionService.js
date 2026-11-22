@@ -16,7 +16,7 @@ export const determinarJurisdiccion = (lat, lon) => {
   return {
     municipio: 'Bogotá D.C.',
     entidad: 'Instituto Distrital de Protección y Bienestar Animal (IDPYBA) / Escuadrón Anticrueldad',
-    canales: 'Línea 123 (Urgencias) | Línea 018000115161 | Bogotá Te Escucha.'
+    canales: 'Línea 123 (Urgencias) | Línea (601) 439 9801 | Bogotá Te Escucha.'
   };
 };
 
